@@ -42,5 +42,3 @@ Local preview: `python3 -m http.server 4321`, then open http://localhost:4321.
 
 **Vercel (recommended for a custom domain):** import the GitHub repo at vercel.com/new. Framework preset: **Other**. No build command. Output directory: `.`. `vercel.json` adds `noindex` and no-referrer headers for `/p/`.
 
-Before launch:
-- Replace the placeholder contact email `hello@vexonlabs.co` in `index.html`.
