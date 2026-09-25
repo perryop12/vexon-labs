@@ -1,0 +1,7 @@
+# Plaintext private pages and their source material — never commit these.
+private/
+.env.local
+.env*.local
+.DS_Store
+node_modules/
+.vercel

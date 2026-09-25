@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Private project — Vexon Labs</title>
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<style>
+  body { min-height: 100vh; display: flex; flex-direction: column; }
+  .gate { flex: 1; display: grid; place-items: center; padding: 48px var(--gutter); }
+  .gate-card { width: 100%; max-width: 440px; }
+  .gate-lock { width: 52px; height: 52px; border-radius: 14px; background: var(--ink); color: var(--paper); display: grid; place-items: center; margin-bottom: 28px; }
+  .gate-lock svg { width: 22px; height: 22px; }
+  .gate h1 { margin: 14px 0 12px; }
+  .gate p { color: var(--ink-2); }
+  .gate form { margin-top: 28px; display: grid; gap: 14px; }
+  .gate label.f { font: 500 12px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .gate input[type="password"] {
+    width: 100%; font: 16px/1.2 var(--f-mono); padding: 15px 16px; border-radius: 12px;
+    border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
+  }
+  .gate input[type="password"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+  .gate .remember { display: flex; gap: 10px; align-items: center; font-size: 14.5px; color: var(--ink-2); }
+  .gate .remember input { width: 16px; height: 16px; accent-color: var(--accent); }
+  .gate .btn { justify-content: center; width: 100%; padding: 15px 20px; }
+  .gate .btn[disabled] { opacity: .6; cursor: progress; transform: none; }
+  .gate .err { color: var(--bad); font-size: 14.5px; min-height: 1.4em; margin: 0; }
+  .gate .fine { font-size: 13.5px; color: var(--muted); margin-top: 28px; border-top: 1px solid var(--line); padding-top: 18px; }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="Vexon Labs home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M8.5 10 16 23.5 23.5 10" fill="none" stroke="var(--paper)" stroke-width="3.2"/><circle cx="23.5" cy="10" r="2.6" fill="var(--accent)"/></svg>
+      Vexon <span class="labs">Labs</span>
+    </a>
+    <nav class="nav"><button class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm0 12.5v-11a5.5 5.5 0 0 1 0 11Z"/></svg></button></nav>
+  </div>
+</header>
+<main class="gate">
+  <div class="gate-card">
+    <div class="gate-lock"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="9" width="12" height="8" rx="2"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9"/></svg></div>
+    <div class="eyebrow"><span class="num">Private</span> · Collaborators only</div>
+    <h1 class="h1">__TITLE__</h1>
+    <p>This project dossier is shared only with current collaborators. Enter the access key you were given.</p>
+    <form id="gate-form" autocomplete="off">
+      <label class="f" for="pw">Access key</label>
+      <input id="pw" type="password" autocomplete="current-password" required autofocus spellcheck="false">
+      <label class="remember"><input type="checkbox" id="remember"> Remember on this device</label>
+      <p class="err" id="err" role="alert"></p>
+      <button class="btn" type="submit" id="go">Unlock <span class="arr">→</span></button>
+    </form>
+    <p class="fine">The page is encrypted end to end. It is decrypted in your browser only — the key never leaves this device.</p>
+  </div>
+</main>
+<script src="../../assets/js/site.js"></script>
+<script>
+(function () {
+  var PAYLOAD = __PAYLOAD__;
+  var STORE = "vx-key-__SLUG__";
+  var enc = new TextEncoder();
+  var dec = new TextDecoder();
+  function unb64(s) { var b = atob(s), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
+  function b64(buf) { var s = "", a = new Uint8Array(buf); for (var i = 0; i < a.length; i++) s += String.fromCharCode(a[i]); return btoa(s); }
+  function store(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  function deriveKey(password) {
+    return crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]).then(function (base) {
+      return crypto.subtle.deriveKey(
+        { name: "PBKDF2", salt: unb64(PAYLOAD.salt), iterations: PAYLOAD.iter, hash: "SHA-256" },
+        base, { name: "AES-GCM", length: 256 }, true, ["decrypt"]);
+    });
+  }
+  function decryptWith(key) {
+    return crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(PAYLOAD.iv) }, key, unb64(PAYLOAD.ct)).then(function (pt) { return dec.decode(pt); });
+  }
+  function render(html) {
+    document.open();
+    document.write(html);
+    document.close();
+  }
+
+  var form = document.getElementById("gate-form");
+  var input = document.getElementById("pw");
+  var err = document.getElementById("err");
+  var btn = document.getElementById("go");
+  var remember = document.getElementById("remember");
+
+  function tryPassword(password, keep) {
+    btn.disabled = true; err.textContent = ""; btn.firstChild.nodeValue = "Unlocking ";
+    return deriveKey(password).then(function (key) {
+      return decryptWith(key).then(function (html) {
+        if (keep) crypto.subtle.exportKey("raw", key).then(function (raw) { store(STORE, b64(raw)); });
+        render(html);
+      });
+    }).catch(function () {
+      btn.disabled = false; btn.firstChild.nodeValue = "Unlock ";
+      err.textContent = "That key didn't work. Check it and try again.";
+      input.select();
+    });
+  }
+
+  // 1) A remembered key on this device.
+  var saved = load(STORE);
+  var ready = Promise.reject();
+  if (saved) {
+    ready = crypto.subtle.importKey("raw", unb64(saved), "AES-GCM", false, ["decrypt"])
+      .then(decryptWith).then(render)
+      .catch(function () { store(STORE, null); throw 0; });
+  }
+
+  // 2) A share link carrying the key in the #fragment (never sent to the server).
+  function fromHash() {
+    var m = location.hash.match(/[#&]k=([^&]+)/);
+    if (!m) return;
+    var pw = decodeURIComponent(m[1]);
+    history.replaceState(null, "", location.pathname + location.search);
+    input.value = pw;
+    tryPassword(pw, true);
+  }
+  ready.catch(fromHash);
+  window.addEventListener("hashchange", fromHash);
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (input.value) tryPassword(input.value, remember.checked);
+  });
+})();
+</script>
+</body>
+</html>

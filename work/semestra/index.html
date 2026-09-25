@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Semestra — Case study · Vexon Labs</title>
+<meta name="description" content="How Vexon Labs designed, built and shipped Semestra — an AI study companion live on iOS, Android and the web in nine languages, with mobile money and card payments.">
+<meta property="og:title" content="Semestra — a Vexon Labs case study">
+<meta property="og:description" content="Turn the syllabus a student was actually given into the studying they never get around to.">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<style>
+  :root { --sem: #7b5cf5; --sem-2: #a78bfa; --sem-soft: #efeaff; }
+  .se-hero { padding-bottom: 0; }
+  .se-hero .display { max-width: 12ch; }
+  .se-hero .display em { color: var(--sem); }
+  .se-id { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .se-id img { width: 48px; height: 48px; border-radius: 12px; }
+  .se-stage {
+    margin-top: clamp(40px, 6vw, 72px);
+    border-radius: 32px; overflow: hidden; position: relative;
+    background:
+      radial-gradient(70% 90% at 85% 0%, #b9a6ff 0%, transparent 60%),
+      radial-gradient(60% 80% at 0% 100%, #ffd9ad 0%, transparent 60%),
+      radial-gradient(50% 60% at 50% 60%, #f6f1ff 0%, transparent 70%),
+      #e9e3ff;
+    padding: clamp(32px, 5vw, 64px) clamp(12px, 3vw, 40px) 0;
+  }
+  .se-stage-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(10px, 2vw, 28px); align-items: end; }
+  .se-stage-row .device { max-width: 250px; border-radius: 38px; padding: 8px; }
+  .se-stage-row .device > .screen { border-radius: 31px; }
+  .se-stage-row > :nth-child(1), .se-stage-row > :nth-child(5) { transform: translateY(24%); }
+  .se-stage-row > :nth-child(2), .se-stage-row > :nth-child(4) { transform: translateY(10%); }
+  .se-stage-row > * { margin-bottom: -8%; }
+  @media (max-width: 900px) {
+    .se-stage-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .se-stage-row > :nth-child(1), .se-stage-row > :nth-child(5) { display: none; }
+  }
+
+  .se-problem { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; background: var(--surface); }
+  .se-problem > div { padding: clamp(22px, 3vw, 36px); }
+  .se-problem > div + div { border-left: 1px solid var(--line); }
+  .se-problem .k { font: 500 12px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .se-problem h3 { font-family: var(--f-display); font-weight: 400; font-size: 32px; margin: 14px 0 12px; letter-spacing: -.01em; }
+  .se-problem p { margin: 0; color: var(--ink-2); font-size: 15.5px; }
+  .se-problem .gap { background: var(--ink); color: var(--paper); }
+  .se-problem .gap p { color: color-mix(in srgb, var(--paper) 75%, transparent); }
+  .se-problem .gap .k { color: var(--accent); }
+  @media (max-width: 820px) {
+    .se-problem { grid-template-columns: minmax(0, 1fr); }
+    .se-problem > div + div { border-left: 0; border-top: 1px solid var(--line); }
+  }
+
+  .se-how { display: grid; gap: clamp(48px, 7vw, 96px); }
+  .se-how-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 6vw, 96px); align-items: center; }
+  .se-how-row:nth-child(even) .se-how-art { order: -1; }
+  .se-how-art { background: var(--sem-soft); border-radius: 28px; padding: clamp(28px, 4vw, 48px) 20px; }
+  :root[data-theme="dark"] .se-how-art { background: #1d1830; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .se-how-art { background: #1d1830; } }
+  .se-how-art .device { max-width: 270px; }
+  .se-step { font: 500 13px/1 var(--f-mono); color: var(--sem); margin-bottom: 18px; display: block; }
+  .se-how-row h3 { font-family: var(--f-display); font-weight: 400; font-size: clamp(32px, 3.6vw, 48px); line-height: 1.04; letter-spacing: -.01em; margin-bottom: 18px; }
+  .se-how-row p { color: var(--ink-2); max-width: 46ch; }
+  .se-formats { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  @media (max-width: 820px) {
+    .se-how-row { grid-template-columns: minmax(0, 1fr); }
+    .se-how-row:nth-child(even) .se-how-art { order: 0; }
+  }
+
+  .se-pillars { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px clamp(14px, 2vw, 24px); margin-bottom: clamp(40px, 6vw, 64px); }
+  .se-pillar { border-top: 2px solid var(--sem); padding-top: 18px; }
+  .se-pillar .k { font: 500 12px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--sem); }
+  .se-pillar h3 { font-size: 19px; font-weight: 600; margin: 12px 0 8px; letter-spacing: -.01em; }
+  .se-pillar p { color: var(--ink-2); font-size: 15px; margin: 0; }
+  @media (max-width: 520px) { .se-pillars { grid-template-columns: minmax(0, 1fr); } }
+
+  .se-video { position: relative; aspect-ratio: 16 / 9; border-radius: var(--r-lg); overflow: hidden; background: #111; cursor: pointer; border: 1px solid var(--line); }
+  .se-video img { width: 100%; height: 100%; object-fit: cover; opacity: .85; transition: opacity .2s, transform .4s; }
+  .se-video:hover img { opacity: 1; transform: scale(1.02); }
+  .se-video .play { position: absolute; inset: 0; display: grid; place-items: center; }
+  .se-video .play span { width: 72px; height: 72px; border-radius: 50%; background: rgba(255,255,255,.95); display: grid; place-items: center; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+  .se-video .play svg { width: 24px; height: 24px; margin-left: 4px; color: #111; }
+  .se-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .se-video-cap { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; font-size: 15px; }
+  .se-video-cap span:last-child { font-family: var(--f-mono); font-size: 13px; color: var(--muted); }
+
+  .se-arch { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; position: relative; }
+  .se-arch > div { border: 1px solid var(--line-strong); border-radius: var(--r-lg); padding: 24px; background: var(--surface); position: relative; }
+  .se-arch > div + div { margin-left: 28px; }
+  .se-arch > div + div::before { content: ""; position: absolute; left: -29px; top: 50%; width: 28px; border-top: 1px dashed var(--line-strong); }
+  .se-arch .k { font: 500 12px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+  .se-arch h4 { font-size: 20px; margin: 12px 0 10px; }
+  .se-arch ul { margin: 0; padding-left: 1.1em; color: var(--ink-2); font-size: 15px; }
+  .se-arch li { margin: 4px 0; }
+  @media (max-width: 900px) {
+    .se-arch { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+    .se-arch > div + div { margin-left: 0; }
+    .se-arch > div + div::before { left: 50%; top: -29px; width: 0; height: 28px; border-top: 0; border-left: 1px dashed var(--line-strong); }
+  }
+
+  .se-price td.best { color: var(--ink); }
+  .se-quote { font-family: var(--f-display); font-size: clamp(28px, 3.4vw, 44px); line-height: 1.15; letter-spacing: -.01em; max-width: 26ch; margin: 0; }
+  .se-quote em { color: var(--sem); }
+  :root[data-theme="dark"] .se-quote em, :root[data-theme="dark"] .se-hero .display em { color: var(--sem-2); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .se-quote em, :root:not([data-theme="light"]) .se-hero .display em { color: var(--sem-2); } }
+
+  .se-next { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="Vexon Labs home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M8.5 10 16 23.5 23.5 10" fill="none" stroke="var(--paper)" stroke-width="3.2"/><circle cx="23.5" cy="10" r="2.6" fill="var(--accent)"/></svg>
+      Vexon <span class="labs">Labs</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="../../#work" aria-current="page">Work</a>
+      <a href="../../#approach" class="hide-sm">Approach</a>
+      <a href="../../#contact">Contact</a>
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm0 12.5v-11a5.5 5.5 0 0 1 0 11Z"/></svg></button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero se-hero">
+    <div class="wrap">
+      <div class="eyebrow"><a href="../../#work" style="text-decoration:none">Work</a> / <span class="num">Case study 01</span></div>
+      <div class="se-id">
+        <img src="../../assets/img/semestra/logo-mark.png" alt="Semestra logo" width="48" height="48">
+        <div><div class="h4">Semestra</div><div class="mono muted">AI study companion · semestra.co</div></div>
+      </div>
+      <h1 class="display">Your whole semester, <em>finally</em> under control.</h1>
+      <p class="lede">An AI study companion for university students. Upload a course outline, a slide deck or a lecture link — Semestra returns structured lessons, quizzes and flashcards, then schedules review around the student's real timetable.</p>
+      <div class="row">
+        <a class="btn" href="https://semestra.co" rel="noopener">Visit semestra.co <span class="arr">↗</span></a>
+        <a class="btn btn-ghost" href="#film">Watch the walkthrough</a>
+      </div>
+      <dl class="meta-strip">
+        <div><dt>Role</dt><dd>Research, design, engineering, operations</dd></div>
+        <div><dt>Platforms</dt><dd>iOS · Android · Web</dd></div>
+        <div><dt>Stack</dt><dd>Expo · Supabase · Gemini</dd></div>
+        <div><dt>Status</dt><dd>Live · first paid semester Sep 2026</dd></div>
+      </dl>
+    </div>
+    <div class="wrap">
+      <div class="se-stage" aria-label="Semestra app screens">
+        <div class="se-stage-row">
+          <div class="device"><div class="screen"><img src="../../assets/img/semestra/courses.webp" alt="Courses screen" loading="lazy"></div></div>
+          <div class="device"><div class="screen"><img src="../../assets/img/semestra/lesson.webp" alt="Lesson screen with summary and quiz tabs"></div></div>
+          <div class="device"><div class="screen"><img src="../../assets/img/semestra/home.webp" alt="Home screen with today's schedule and review reminder"></div></div>
+          <div class="device"><div class="screen"><img src="../../assets/img/semestra/quiz.webp" alt="Practice quiz question"></div></div>
+          <div class="device"><div class="screen"><img src="../../assets/img/semestra/card-flip.webp" alt="Flashcard showing a definition" loading="lazy"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap" style="padding-top: clamp(72px, 10vw, 128px)">
+    <div class="doc">
+      <aside class="toc" aria-label="Contents">
+        <div class="eyebrow">Contents</div>
+        <ol>
+          <li><a href="#problem">The problem</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#product">The product</a></li>
+          <li><a href="#film">Walkthroughs</a></li>
+          <li><a href="#ai">Why AI-native</a></li>
+          <li><a href="#market">Built for this market</a></li>
+          <li><a href="#model">Business model</a></li>
+          <li><a href="#stack">Under the hood</a></li>
+          <li><a href="#status">Where it stands</a></li>
+          <li><a href="#learned">What we learned</a></li>
+        </ol>
+      </aside>
+
+      <div class="doc-body">
+        <!-- 01 -->
+        <section id="problem">
+          <div class="eyebrow"><span class="num">01</span> The problem</div>
+          <h2 class="h2">Every student is handed the raw material. <em>Almost none</em> convert it.</h2>
+          <div class="prose">
+            <p>A semester arrives as a course outline, a folder of slide decks, some scanned readings and a timetable. The work of turning that into revision — summarising, writing questions, spacing it out — is the part that actually produces a grade. It's also the part that gets skipped.</p>
+            <p>The tools students already have each solve a slice of it, and none of them own the whole semester:</p>
+          </div>
+          <div class="se-problem reveal" style="margin-top:28px">
+            <div>
+              <div class="k">Planners</div>
+              <h3>Organise, but don't teach</h3>
+              <p>Calendars and to-do apps track when the exam is. They do nothing about whether you understand the material.</p>
+            </div>
+            <div>
+              <div class="k">General AI chat</div>
+              <h3>Answers, but no structure</h3>
+              <p>A chatbot will explain a concept on request. It doesn't know the course, doesn't build a curriculum, and doesn't come back in four days to check retention.</p>
+            </div>
+            <div class="gap">
+              <div class="k">The gap</div>
+              <h3>Nothing owns the semester</h3>
+              <p>The student is left to be their own instructional designer — every week, across five courses.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 02 -->
+        <section id="how">
+          <div class="eyebrow"><span class="num">02</span> How it works</div>
+          <h2 class="h2">Three steps. The third is the one that <em>compounds</em>.</h2>
+          <div class="se-how" style="margin-top:48px">
+            <div class="se-how-row reveal">
+              <div>
+                <span class="se-step">Step 01</span>
+                <h3>Bring the material you already have.</h3>
+                <p>Semestra works from what the lecturer actually handed out. Several sources can be combined into a single lesson, and a YouTube lecture is read through its transcript.</p>
+                <div class="se-formats">
+                  <span class="tag">PDF</span><span class="tag">Word</span><span class="tag">PowerPoint</span><span class="tag">Plain text &amp; Markdown</span><span class="tag">Photos of notes</span><span class="tag">Web links</span><span class="tag">YouTube lectures</span>
+                </div>
+              </div>
+              <div class="se-how-art">
+                <div class="device"><div class="screen"><img src="../../assets/img/semestra/create.webp" alt="Create lesson screen: upload a document or paste a link" loading="lazy"></div></div>
+              </div>
+            </div>
+            <div class="se-how-row reveal">
+              <div>
+                <span class="se-step">Step 02</span>
+                <h3>Get a lesson, not a summary.</h3>
+                <p>The source becomes a readable lesson with learning objectives and concept sections, a quiz drawn from that specific material, and a flashcard deck. Every question is answerable from what the student was given — not from a generic question bank — and each one comes with an explanation.</p>
+              </div>
+              <div class="se-how-art">
+                <div class="device"><div class="screen"><img src="../../assets/img/semestra/lesson-body.webp" alt="Generated lesson with learning objectives" loading="lazy"></div></div>
+              </div>
+            </div>
+            <div class="se-how-row reveal">
+              <div>
+                <span class="se-step">Step 03</span>
+                <h3>The schedule brings it back.</h3>
+                <p>Quiz results feed an SM-2 spaced-repetition schedule, so weak concepts resurface before they fade. Reminders land against the student's real class times — not a generic 9am nudge — and "30 concepts due for review" sits right next to today's lectures.</p>
+              </div>
+              <div class="se-how-art">
+                <div class="device"><div class="screen"><img src="../../assets/img/semestra/home.webp" alt="Home screen showing today's schedule and concepts due for review" loading="lazy"></div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 03 -->
+        <section id="product">
+          <div class="eyebrow"><span class="num">03</span> The product</div>
+          <h2 class="h2">A semester in one place, with the AI doing the part students <em>skip</em>.</h2>
+          <div class="se-pillars">
+            <div class="se-pillar reveal"><div class="k">Learn</div><h3>Lessons, quizzes, flashcards</h3><p>Generated from the student's own material, with a match game for active recall and natural-voice audio for the walk to campus.</p></div>
+            <div class="se-pillar reveal"><div class="k">Plan</div><h3>Semester, courses, deadlines</h3><p>Timetable, assignments and exams in one view, with attendance and a habit tracker that knows which days actually have class.</p></div>
+            <div class="se-pillar reveal"><div class="k">Together</div><h3>Study groups</h3><p>Share decks and quizzes, compare on a leaderboard, message coursemates — and share a whole semester by code.</p></div>
+            <div class="se-pillar reveal"><div class="k">Improve</div><h3>Insights</h3><p>Attendance, quiz mastery and focused study time per course, so a student can see which subject is quietly slipping.</p></div>
+          </div>
+
+          <div class="screens" aria-label="Product screens">
+            <figure style="margin:0"><div class="device"><div class="screen"><img src="../../assets/img/semestra/semester.webp" alt="Semester view with courses and class times" loading="lazy"></div></div><figcaption class="device-caption"><b>Semester</b>Every course, credit and class time for the term.</figcaption></figure>
+            <figure style="margin:0"><div class="device"><div class="screen"><img src="../../assets/img/semestra/courses.webp" alt="Courses grid filtered by lecturer" loading="lazy"></div></div><figcaption class="device-caption"><b>Courses</b>Colour-coded, searchable, filterable by lecturer.</figcaption></figure>
+            <figure style="margin:0"><div class="device"><div class="screen"><img src="../../assets/img/semestra/course.webp" alt="Course detail with lessons and memory score" loading="lazy"></div></div><figcaption class="device-caption"><b>Course</b>Lessons per course, with a live memory score.</figcaption></figure>
+            <figure style="margin:0"><div class="device"><div class="screen"><img src="../../assets/img/semestra/study-tools.webp" alt="Flashcards, match exercise and practice quiz for a lesson" loading="lazy"></div></div><figcaption class="device-caption"><b>Study tools</b>Flashcards, a match game and a practice quiz per lesson.</figcaption></figure>
+            <figure style="margin:0"><div class="device"><div class="screen"><img src="../../assets/img/semestra/card.webp" alt="Flashcard term side" loading="lazy"></div></div><figcaption class="device-caption"><b>Flashcards</b>Terms and definitions pulled straight from the source.</figcaption></figure>
+            <figure style="margin:0"><div class="device"><div class="screen"><img src="../../assets/img/semestra/groups.webp" alt="Study groups list" loading="lazy"></div></div><figcaption class="device-caption"><b>Study groups</b>Create or join with a code; share lessons and decks.</figcaption></figure>
+            <figure style="margin:0"><div class="device"><div class="screen"><img src="../../assets/img/semestra/share.webp" alt="Invite members with a share code" loading="lazy"></div></div><figcaption class="device-caption"><b>Share by code</b>A classmate imports your whole timetable instead of typing it.</figcaption></figure>
+          </div>
+
+          <div class="grid g3" style="margin-top:40px">
+            <div class="card reveal"><div class="h4">Streaks that fit real life</div><p>A study habit that doesn't punish a student for taking the weekend off.</p></div>
+            <div class="card reveal"><div class="h4">Everywhere, in sync</div><p>Start a lesson on a laptop between classes and finish it on the bus. Progress syncs across web and mobile.</p></div>
+            <div class="card reveal"><div class="h4">Works from their notes</div><p>Semestra doesn't replace the lecturer's material — it turns it into lessons, quizzes and flashcards, so students revise their own course.</p></div>
+          </div>
+        </section>
+
+        <!-- 04 -->
+        <section id="film">
+          <div class="eyebrow"><span class="num">04</span> Walkthroughs</div>
+          <h2 class="h2">Watch it <em>work</em>.</h2>
+          <div class="grid g2" style="margin-top:12px">
+            <div class="reveal">
+              <div class="se-video" data-yt="0H50FM7Z0jU" role="button" tabindex="0" aria-label="Play: a PDF becomes a lesson">
+                <img src="https://i.ytimg.com/vi/0H50FM7Z0jU/hqdefault.jpg" alt="" loading="lazy">
+                <div class="play"><span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></span></div>
+              </div>
+              <div class="se-video-cap"><span>A PDF becomes a lesson and a quiz</span><span>2:29</span></div>
+            </div>
+            <div class="reveal">
+              <div class="se-video" data-yt="EPPYTYRQ264" role="button" tabindex="0" aria-label="Play: full product walkthrough">
+                <img src="https://i.ytimg.com/vi/EPPYTYRQ264/hqdefault.jpg" alt="" loading="lazy">
+                <div class="play"><span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></span></div>
+              </div>
+              <div class="se-video-cap"><span>Full walkthrough — schedule, courses, lessons, flashcards, match game</span><span>2:38</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 05 -->
+        <section id="ai">
+          <div class="eyebrow"><span class="num">05</span> Why AI-native</div>
+          <h2 class="h2">Remove the model and there is <em>no product</em> left.</h2>
+          <div class="prose">
+            <p>Semestra isn't a planner with a chatbot bolted on. Generation <strong>is</strong> the core loop: every lesson, every quiz question, every flashcard and every audio track is produced at request time from a document the student supplied minutes earlier.</p>
+          </div>
+          <div class="grid g3" style="margin-top:28px">
+            <div class="card reveal"><div class="eyebrow">Gemini Flash</div><div class="h4">Lesson &amp; quiz generation</div><p>Structured lesson content, multiple-choice questions with explanations, and flashcard decks — produced from arbitrary uploaded documents.</p></div>
+            <div class="card reveal"><div class="eyebrow">Gemini TTS</div><div class="h4">Natural-voice lesson audio</div><p>Any lesson becomes something a student can listen to. Audio is cached after the first synthesis, so a replay costs nothing.</p></div>
+            <div class="card reveal"><div class="eyebrow">Cost engineering</div><div class="h4">A cross-user lesson cache</div><p>Lessons are keyed by the SHA-256 of the source document. When forty students on one course upload the same outline, it's generated once and served forty times — and the file itself is never stored.</p></div>
+          </div>
+          <div class="callout neutral">
+            <div class="eyebrow">Design decision</div>
+            <p>Caching by content hash does double duty: it cuts the cost of the most expensive operation in the product, and it means Semestra never has to keep a student's source files. The cheaper path and the more private path are the same path.</p>
+          </div>
+        </section>
+
+        <!-- 06 -->
+        <section id="market">
+          <div class="eyebrow"><span class="num">06</span> Built for this market</div>
+          <h2 class="h2">Built in Accra, for the constraints students <em>here</em> actually have.</h2>
+          <div class="prose"><p>The African university student is not an edge case to localise for later. Every decision below came from the market Semestra launched in.</p></div>
+          <ol class="num-list" style="margin-top:20px">
+            <li class="reveal"><div><h4>Mobile money, not just cards</h4><p>Paystack handles Ghanaian mobile money and local cards; Stripe handles international. A student without a Visa card is a customer, not a lost signup.</p></div></li>
+            <li class="reveal"><div><h4>An ad-funded free tier</h4><p>Free users get four courses and four AI lessons a month, and can watch a rewarded ad to unlock a quiz. Ability to pay is not the gate on studying.</p></div></li>
+            <li class="reveal"><div><h4>Large classes, few contact hours</h4><p>Where one lecturer serves several hundred students, per-student explanation has to come from somewhere. That is precisely what generation is good at.</p></div></li>
+            <li class="reveal"><div><h4>Nine languages, one codebase</h4><p>English, French, Portuguese, Arabic, Spanish, German, Italian, Hindi and Chinese — covering most of the continent's languages of instruction from launch.</p></div></li>
+          </ol>
+        </section>
+
+        <!-- 07 -->
+        <section id="model">
+          <div class="eyebrow"><span class="num">07</span> Business model</div>
+          <h2 class="h2">Free to study. Paid to study <em>faster</em>.</h2>
+          <div class="prose"><p>Priced against a student's budget in each market rather than converted from a dollar figure. Premium unlocks unlimited AI lessons, quizzes, flashcards, lesson audio and cross-device sync. New accounts get seven days of Premium free, no card required.</p></div>
+          <div class="table-wrap se-price reveal" style="margin-top:24px">
+            <table class="data">
+              <thead><tr><th>Plan</th><th>International</th><th>Ghana</th><th>Why it exists</th></tr></thead>
+              <tbody>
+                <tr><td>Monthly</td><td class="num">$3.99</td><td class="num">₵50</td><td>Low commitment, matches a student's cash cycle</td></tr>
+                <tr><td>Semester</td><td class="num">$14.99</td><td class="num">₵185</td><td>Four months — the unit students actually think in</td></tr>
+                <tr><td>Annual</td><td class="num">$34.99</td><td class="num">₵410</td><td>Best value, and the plan that survives the holidays</td></tr>
+                <tr><td>Free</td><td class="num">—</td><td class="num">—</td><td>4 courses, 4 AI lessons a month, ad-unlocked quizzes</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout" style="margin-top:28px">
+            <div class="eyebrow">Why the free tier is generous</div>
+            <p>Planning, schedules and study groups stay free forever. What converts is the AI — which is also the only part with a marginal cost. So the economics and the product incentives point the same way.</p>
+          </div>
+        </section>
+
+        <!-- 08 -->
+        <section id="stack">
+          <div class="eyebrow"><span class="num">08</span> Under the hood</div>
+          <h2 class="h2">A small stack, run lean <em>on purpose</em>.</h2>
+          <div class="se-arch reveal" style="margin-top:32px">
+            <div>
+              <div class="k">Client</div>
+              <h4>Expo · React Native</h4>
+              <ul><li>One codebase for iOS, Android and web</li><li>Offline-first local storage</li><li>Background sync across devices</li><li>Feature parity incl. groups and payments</li></ul>
+            </div>
+            <div>
+              <div class="k">Backend</div>
+              <h4>Supabase · Postgres</h4>
+              <ul><li>Row-level security on every table</li><li>Edge Functions for anything holding a key</li><li>Database webhooks for async work</li><li>Paystack + Stripe billing</li></ul>
+            </div>
+            <div>
+              <div class="k">Intelligence</div>
+              <h4>Gemini, server-side only</h4>
+              <ul><li>No model key ever reaches a client</li><li>Generation, grading and speech behind Edge Functions</li><li>Per-user quota enforcement</li><li>Content-hash lesson cache</li></ul>
+            </div>
+          </div>
+          <div class="prose" style="margin-top:32px">
+            <p>Everything above is operated by one person. That constraint shaped the architecture: managed infrastructure, aggressive caching, and no service that needs babysitting.</p>
+          </div>
+        </section>
+
+        <!-- 09 -->
+        <section id="status">
+          <div class="eyebrow"><span class="num">09</span> Where it stands</div>
+          <h2 class="h2">Live — and deliberately <em>not yet</em> monetised.</h2>
+          <div class="grid g4" style="margin-top:12px">
+            <div class="stat reveal"><div class="v">3</div><div class="l">Platforms live — App Store, Google Play, web</div></div>
+            <div class="stat reveal"><div class="v">9</div><div class="l">Languages shipped</div></div>
+            <div class="stat reveal"><div class="v">44</div><div class="l">Registered students ahead of any acquisition push</div></div>
+            <div class="stat reveal"><div class="v">Sep ’26</div><div class="l">First paid semester</div></div>
+          </div>
+          <div class="grid g2" style="margin-top:40px">
+            <div class="card reveal">
+              <div class="eyebrow">Timing</div>
+              <div class="h4">Revenue starts with the semester, not the calendar</div>
+              <p>Student software is bought when a term begins. The first version didn't solve enough of the problem to charge for, so it was rebuilt after more research rather than pushed into the mid-year trough — a window that would have tested nothing. Both payment rails are live; September is the first real commercial test.</p>
+            </div>
+            <div class="card reveal">
+              <div class="eyebrow">The rebuild</div>
+              <div class="h4">Willing to rebuild rather than defend</div>
+              <p>Version one shipped, met real students, and fell short. Instead of marketing harder, it was researched again and substantially rebuilt — payments, study groups, spaced repetition, lesson audio and nine languages — before opening the paid tier.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 10 -->
+        <section id="learned">
+          <div class="eyebrow"><span class="num">10</span> What we learned</div>
+          <p class="se-quote reveal">The student already had the material. What they were missing was <em>someone to turn it into studying</em> — and to come back for it four days later.</p>
+          <ol class="num-list" style="margin-top:40px">
+            <li class="reveal"><div><h4>Own the loop, not the feature</h4><p>Lessons alone are a summariser. Spaced review tied to the real timetable is what turns one upload into a semester of retention — and it's the part competitors don't have.</p></div></li>
+            <li class="reveal"><div><h4>Price in the unit people think in</h4><p>Students think in semesters and cash cycles, not calendar years. A semester plan and mobile money did more for access than any discount.</p></div></li>
+            <li class="reveal"><div><h4>Cost engineering is product design</h4><p>A content-hash cache and per-user quotas are what make a generous free tier possible in a price-sensitive market.</p></div></li>
+            <li class="reveal"><div><h4>Rebuild when the evidence says so</h4><p>A product that doesn't solve enough of the problem won't be saved by marketing. Going back to research was the fastest route to something worth paying for.</p></div></li>
+          </ol>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <section class="section-tight" style="border-top:1px solid var(--line)">
+    <div class="wrap se-next">
+      <div>
+        <div class="eyebrow">Next</div>
+        <h2 class="h2" style="margin-top:12px">Have a problem that <em>already</em> exists?</h2>
+      </div>
+      <div class="row">
+        <a class="btn" href="../../#contact">Talk to Vexon Labs <span class="arr">→</span></a>
+        <a class="btn btn-ghost" href="https://semestra.co" rel="noopener">Try Semestra ↗</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© <span data-year>2026</span> Vexon Labs · Accra, Ghana</span>
+    <span class="row" style="gap:20px"><a href="../../">Home</a><a href="https://semestra.co" rel="noopener">semestra.co ↗</a></span>
+  </div>
+</footer>
+<script src="../../assets/js/site.js"></script>
+<script>
+  // Click-to-load YouTube so the page stays light until someone actually wants the video.
+  document.querySelectorAll(".se-video[data-yt]").forEach(function (el) {
+    function play() {
+      if (el.querySelector("iframe")) return;
+      var f = document.createElement("iframe");
+      f.src = "https://www.youtube-nocookie.com/embed/" + el.dataset.yt + "?autoplay=1&rel=0";
+      f.title = el.getAttribute("aria-label");
+      f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+      f.allowFullscreen = true;
+      el.appendChild(f);
+    }
+    el.addEventListener("click", play);
+    el.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); play(); } });
+  });
+</script>
+</body>
+</html>
