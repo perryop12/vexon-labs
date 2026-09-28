@@ -66,6 +66,17 @@
     .feature-art .d3 { right: -8%; top: 18%; }
   }
 
+  .feature-art.asnk { background:
+      radial-gradient(70% 90% at 100% 0%, rgba(242,183,5,.45), transparent 60%),
+      radial-gradient(70% 80% at 0% 100%, rgba(214,40,40,.35), transparent 60%),
+      linear-gradient(160deg, #1a2a6c, #0f1a47); }
+  .pack { position: absolute; background: #fff; border-radius: 22px; box-shadow: 0 24px 50px -18px rgba(0,0,0,.55); padding: 10px; }
+  .pack img { width: 100%; height: 100%; object-fit: contain; border-radius: 14px; }
+  .pack.p1 { width: 44%; aspect-ratio: 1; left: 6%; top: 10%; transform: rotate(-5deg); }
+  .pack.p2 { width: 40%; aspect-ratio: 1; right: 7%; top: 6%; transform: rotate(4deg); }
+  .pack.p3 { width: 38%; aspect-ratio: 1; left: 18%; bottom: 6%; transform: rotate(3deg); }
+  .pack.p4 { width: 36%; aspect-ratio: 1; right: 12%; bottom: 10%; transform: rotate(-4deg); }
+  .feature + .feature { margin-top: clamp(16px, 2.4vw, 28px); }
   .private-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 28px); margin-top: clamp(16px, 2.4vw, 28px); }
   .private-card {
     border: 1px dashed var(--line-strong); border-radius: var(--r-lg); padding: 28px;
@@ -208,18 +219,51 @@
         </div>
       </a>
 
+
+      <a class="feature reveal" href="work/asnk-trading/">
+        <div class="feature-copy">
+          <div class="feature-logo">
+            <img src="assets/img/asnk/asnk-logo.webp" alt="" width="40" height="40" style="width:auto;height:34px;background:#fff;padding:3px 6px">
+            <div>
+              <div class="h4">ASNK Trading</div>
+              <div class="mono muted">Website redesign · Distribution</div>
+            </div>
+          </div>
+          <h3 class="h1">Every product kept. <em>Everything</em> else rethought.</h3>
+          <p>A Ghanaian distributor of Arm &amp; Hammer, OxiClean, Fino, Paclan and Kyknos had the right content on a slow, dated site. We rebuilt it as a fast, searchable storefront with five brand worlds — and carried over every word.</p>
+          <div class="tags">
+            <span class="tag"><span class="dot"></span>Live redesign</span>
+            <span class="tag">5 brands</span>
+            <span class="tag">34 products</span>
+            <span class="tag">Mobile-first</span>
+          </div>
+          <div class="feature-stats">
+            <div><div class="v">92→9</div><div class="l">Requests per brand page</div></div>
+            <div><div class="v">0</div><div class="l">Pieces of content lost</div></div>
+            <div><div class="v">/</div><div class="l">Instant search, any page</div></div>
+          </div>
+          <span class="go">Read the case study <span class="arr">→</span></span>
+        </div>
+        <div class="feature-art asnk" aria-hidden="true">
+          <div class="pack p1"><img src="assets/img/asnk/oxi-power-paks.webp" alt="" loading="lazy"></div>
+          <div class="pack p2"><img src="assets/img/asnk/kyknos-crushed.webp" alt="" loading="lazy"></div>
+          <div class="pack p3"><img src="assets/img/asnk/charcoal-white-toothpaste.webp" alt="" loading="lazy"></div>
+          <div class="pack p4"><img src="assets/img/asnk/gloves.webp" alt="" loading="lazy"></div>
+        </div>
+      </a>
+
       <div class="private-row">
         <div class="private-card reveal">
           <div class="lock"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="9" width="12" height="8" rx="2"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9"/></svg></div>
           <div>
-            <div class="eyebrow">Project 02 · In development</div>
+            <div class="eyebrow">Project 03 · In development</div>
             <p>A product in private development with partners. Details are shared with collaborators through a protected link.</p>
           </div>
         </div>
         <div class="private-card reveal">
           <div class="lock"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="9" width="12" height="8" rx="2"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9"/></svg></div>
           <div>
-            <div class="eyebrow">Project 03 · In development</div>
+            <div class="eyebrow">Project 04 · In development</div>
             <p>A product in private development with partners. Details are shared with collaborators through a protected link.</p>
           </div>
         </div>

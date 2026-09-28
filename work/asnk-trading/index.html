@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASNK Trading — Case study · Vexon Labs</title>
+<meta name="description" content="How Vexon Labs rebuilt the website of ASNK Trading, a Ghanaian distributor of Arm & Hammer, OxiClean, Fino, Paclan and Kyknos — every page of content kept, everything else made faster, clearer and easier to shop.">
+<meta property="og:title" content="ASNK Trading — a Vexon Labs redesign">
+<meta property="og:description" content="A distributor's website rebuilt: every product kept, everything else rethought.">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<style>
+  :root { --asnk-navy: #1a2a6c; --asnk-red: #d62828; --asnk-gold: #f2b705; }
+  .as-hero .display { max-width: 13ch; }
+  .as-id { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .as-id img { width: 88px; height: auto; background: #fff; border-radius: 12px; padding: 6px 8px; border: 1px solid var(--line); }
+
+  /* Live preview */
+  .as-stage { margin-top: clamp(40px, 6vw, 72px); border-radius: 32px; padding: clamp(14px, 3vw, 36px); background:
+      radial-gradient(60% 80% at 100% 0%, rgba(242,183,5,.35), transparent 60%),
+      radial-gradient(60% 80% at 0% 100%, rgba(214,40,40,.22), transparent 60%),
+      linear-gradient(160deg, #1a2a6c, #0f1a47); }
+  .as-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .as-seg { display: inline-flex; background: rgba(255,255,255,.12); border-radius: 999px; padding: 4px; }
+  .as-seg button { border: 0; background: transparent; color: #fff; font: 500 13px/1 var(--f-sans); padding: 9px 14px; border-radius: 999px; cursor: pointer; }
+  .as-seg button[aria-pressed="true"] { background: #fff; color: #0f1a47; }
+  .as-open { color: #fff; font: 500 14px/1 var(--f-sans); text-decoration: none; opacity: .9; }
+  .as-open:hover { opacity: 1; text-decoration: underline; }
+  .as-frame { margin: 0 auto; transition: max-width .45s cubic-bezier(.2,.7,.2,1); max-width: 100%; }
+  .as-frame .browser { border-color: rgba(255,255,255,.2); }
+  .as-frame iframe { display: block; width: 100%; height: min(78vh, 780px); border: 0; background: #fff; }
+  .as-frame.mobile { max-width: 400px; }
+  .as-frame.mobile iframe { height: min(78vh, 760px); }
+  .as-stage-note { color: rgba(255,255,255,.7); font-size: 13px; text-align: center; margin: 14px 0 0; }
+
+  .as-compare { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 0; border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; background: var(--surface); }
+  .as-compare > div { padding: clamp(20px, 3vw, 32px); }
+  .as-compare > div + div { border-left: 1px solid var(--line); }
+  .as-compare .k { font: 500 12px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; }
+  .as-compare .before .k { color: var(--muted); }
+  .as-compare .after { background: var(--ink); color: var(--paper); }
+  .as-compare .after .k { color: var(--accent); }
+  .as-compare ul { list-style: none; padding: 0; margin: 18px 0 0; }
+  .as-compare li { padding: 11px 0; border-top: 1px solid var(--line); font-size: 15.5px; display: flex; gap: 10px; }
+  .as-compare .after li { border-top-color: color-mix(in srgb, var(--paper) 14%, transparent); color: color-mix(in srgb, var(--paper) 88%, transparent); }
+  .as-compare li::before { content: "–"; color: var(--muted); flex: none; }
+  .as-compare .after li::before { content: "✓"; color: var(--accent); }
+  @media (max-width: 760px) {
+    .as-compare { grid-template-columns: minmax(0,1fr); }
+    .as-compare > div + div { border-left: 0; border-top: 1px solid var(--line); }
+  }
+
+  .as-metric { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); align-items: baseline; gap: 12px; padding: 16px 0; border-top: 1px solid var(--line); }
+  .as-metric:last-child { border-bottom: 1px solid var(--line); }
+  .as-metric .n { font-family: var(--f-display); font-size: clamp(28px, 3.2vw, 40px); line-height: 1; }
+  .as-metric .n.old { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1px; }
+  .as-metric .n.new { color: var(--accent); }
+  .as-metric-head { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; font: 500 11.5px/1.3 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding-bottom: 10px; }
+
+  .as-brands { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 12px; }
+  .as-brand { border-radius: var(--r); padding: 18px; color: #fff; min-height: 150px; display: flex; flex-direction: column; justify-content: space-between; }
+  .as-brand b { font-size: 17px; }
+  .as-brand span { font-size: 13px; opacity: .85; }
+  .as-brand.ah { background: linear-gradient(150deg, #e3242b, #f59e0b); }
+  .as-brand.ox { background: linear-gradient(150deg, #1d4ed8, #f97316); }
+  .as-brand.fi { background: linear-gradient(150deg, #f5b700, #e11d2a); }
+  .as-brand.pa { background: linear-gradient(150deg, #16a34a, #f97316); }
+  .as-brand.ky { background: linear-gradient(150deg, #c81e1e, #7c2d12); }
+  @media (max-width: 900px) { .as-brands { grid-template-columns: repeat(2, minmax(0,1fr)); } .as-brand:last-child { grid-column: span 2; } }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="Vexon Labs home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M8.5 10 16 23.5 23.5 10" fill="none" stroke="var(--paper)" stroke-width="3.2"/><circle cx="23.5" cy="10" r="2.6" fill="var(--accent)"/></svg>
+      Vexon <span class="labs">Labs</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="../../#work" aria-current="page">Work</a>
+      <a href="../../#approach" class="hide-sm">Approach</a>
+      <a href="../../#contact">Contact</a>
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm0 12.5v-11a5.5 5.5 0 0 1 0 11Z"/></svg></button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero as-hero" style="padding-bottom:0">
+    <div class="wrap">
+      <div class="eyebrow"><a href="../../#work" style="text-decoration:none">Work</a> / <span class="num">Case study 02</span></div>
+      <div class="as-id">
+        <img src="../../assets/img/asnk/asnk-logo.webp" alt="ASNK Trading Limited logo" width="88" height="37">
+        <div><div class="h4">ASNK Trading Limited</div><div class="mono muted">Distribution · Accra, Ghana</div></div>
+      </div>
+      <h1 class="display">Every product kept. <em>Everything else</em> rethought.</h1>
+      <p class="lede">ASNK Trading distributes Arm &amp; Hammer, OxiClean, Fino, Paclan and Kyknos in Ghana. Its website had all the right content, buried under a slow, dated template. We rebuilt it into a fast, searchable storefront — and carried over every word.</p>
+      <div class="row">
+        <a class="btn" href="https://perryop12.github.io/asnk-trading/">Open the new site <span class="arr">↗</span></a>
+        <a class="btn btn-ghost" href="https://asnktrading.com" rel="noopener">See the original ↗</a>
+      </div>
+      <dl class="meta-strip">
+        <div><dt>Client</dt><dd>ASNK Trading Limited</dd></div>
+        <div><dt>Scope</dt><dd>Audit, redesign, rebuild, content migration</dd></div>
+        <div><dt>Catalogue</dt><dd>5 brands · 34 products</dd></div>
+        <div><dt>Year</dt><dd>2026</dd></div>
+      </dl>
+    </div>
+    <div class="wrap">
+      <div class="as-stage">
+        <div class="as-toolbar">
+          <div class="as-seg" role="group" aria-label="Preview size">
+            <button type="button" data-size="desktop" aria-pressed="true">Desktop</button>
+            <button type="button" data-size="mobile" aria-pressed="false">Mobile</button>
+          </div>
+          <a class="as-open" href="https://perryop12.github.io/asnk-trading/">Open full screen ↗</a>
+        </div>
+        <div class="as-frame" id="as-frame">
+          <div class="browser">
+            <div class="bar"><i></i><i></i><i></i><span class="url">asnktrading.com — redesign by Vexon Labs</span></div>
+            <iframe src="https://perryop12.github.io/asnk-trading/" title="Live preview of the redesigned ASNK Trading website" loading="lazy"></iframe>
+          </div>
+        </div>
+        <p class="as-stage-note">This is the live site — scroll, search and click around inside the frame.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap" style="padding-top: clamp(72px, 10vw, 128px)">
+    <div class="doc">
+      <aside class="toc" aria-label="Contents">
+        <div class="eyebrow">Contents</div>
+        <ol>
+          <li><a href="#brief">The brief</a></li>
+          <li><a href="#audit">What we found</a></li>
+          <li><a href="#approach">What we changed</a></li>
+          <li><a href="#brands">Five brand worlds</a></li>
+          <li><a href="#content">Content, kept whole</a></li>
+          <li><a href="#numbers">Before &amp; after</a></li>
+          <li><a href="#learned">What we learned</a></li>
+        </ol>
+      </aside>
+
+      <div class="doc-body">
+        <section id="brief">
+          <div class="eyebrow"><span class="num">01</span> The brief</div>
+          <h2 class="h2">Make it <em>modern</em>. Lose nothing.</h2>
+          <div class="prose">
+            <p>ASNK Trading Limited is the country representative in Ghana for four manufacturers: Church &amp; Dwight (UK) for Arm &amp; Hammer, Sarantis (Greece) for Fino, CeDo (Poland) for Paclan, and the Greek Canning Company for Kyknos tomatoes. Its website is where retailers and households go to see what ASNK carries and how to reach it.</p>
+            <p>The brief had two halves, and they pull against each other: make the site feel <strong>extremely modern, interactive and easy to navigate</strong> — and keep <strong>all of the existing content</strong>. No product dropped, no description rewritten away, no contact detail lost.</p>
+          </div>
+        </section>
+
+        <section id="audit">
+          <div class="eyebrow"><span class="num">02</span> What we found</div>
+          <h2 class="h2">The content was right. The <em>container</em> wasn't.</h2>
+          <div class="prose">
+            <p>We started by crawling the whole site — 59 pages across products, brands and categories — and measuring the Arm &amp; Hammer page in a real browser. The problems fell into three groups.</p>
+          </div>
+          <div class="grid g3" style="margin-top:24px">
+            <div class="card reveal"><div class="eyebrow">Speed</div><div class="h4">Heavy for a catalogue</div><p>One brand page made 92 requests, loaded 43 scripts and 23 stylesheets, and moved about 1.7&nbsp;MB — mostly page-builder and slider code, not products. On mobile data that's a real cost.</p></div>
+            <div class="card reveal"><div class="eyebrow">Finding things</div><div class="h4">No way to search</div><p>34 products sat behind brand pages, "Load More" buttons and "Read more" links. There was no search, no filtering, and Kyknos and OxiClean had no proper brand home.</p></div>
+            <div class="card reveal"><div class="eyebrow">First impression</div><div class="h4">A cookie wall and leftovers</div><p>Visitors met a full-screen cookie prompt before any product. Template leftovers ("Home 1", an "Uncategorized" category) and 12 of 15 images without alt text rounded it out.</p></div>
+          </div>
+          <div class="callout neutral">
+            <div class="eyebrow">A note on method</div>
+            <p>Figures come from a single measurement of asnktrading.com/arm-and-hammer in September 2026. Load times vary with connection, so we compare requests and page weight, which don't.</p>
+          </div>
+        </section>
+
+        <section id="approach">
+          <div class="eyebrow"><span class="num">03</span> What we changed</div>
+          <h2 class="h2">A storefront, <em>not</em> a brochure.</h2>
+          <div class="as-compare reveal" style="margin-top:12px">
+            <div class="before">
+              <div class="k">Before</div>
+              <ul>
+                <li>WordPress page builder, slider plugin and shop plugin to show a catalogue with no prices or cart</li>
+                <li>Browse brand by brand, click "Load More", then "Read more"</li>
+                <li>Cookie consent wall before the first product</li>
+                <li>Kyknos and OxiClean folded into other pages</li>
+                <li>Contact form behind a single page, phone number as plain text</li>
+              </ul>
+            </div>
+            <div class="after">
+              <div class="k">After</div>
+              <ul>
+                <li>A lightweight static site: no plugins to update, nothing to patch, no cookies to consent to</li>
+                <li>Instant search from any page (press <span class="mono">/</span>), plus filters by brand and category that live in the URL</li>
+                <li>Every product has its own page with the full description, related products and one-tap Call or Email enquiry</li>
+                <li>Five brand worlds, each in its own colours, with the manufacturer named</li>
+                <li>Tap-to-call, tap-to-email and a map to Ritz Junction on every contact surface</li>
+              </ul>
+            </div>
+          </div>
+          <ol class="num-list" style="margin-top:40px">
+            <li class="reveal"><div><h4>Built for the phone first</h4><p>Most visitors in Ghana arrive on a mid-range Android phone. Layouts, tap targets and image sizes were designed at 360px first and scaled up.</p></div></li>
+            <li class="reveal"><div><h4>Interactive where it helps</h4><p>A floating product hero, a brand marquee, hover-tilt brand cards and quick-view drawers make the catalogue feel alive — and all of it calms down for anyone who prefers reduced motion.</p></div></li>
+            <li class="reveal"><div><h4>Enquiry is the conversion</h4><p>ASNK doesn't sell online, so "add to cart" was never the goal. Every product ends in a pre-filled call or email, so a retailer can ask about stock in one tap.</p></div></li>
+            <li class="reveal"><div><h4>Nothing to maintain</h4><p>Products live in one data file. Adding a product is one entry and a photo — no plugins, no theme updates, no database.</p></div></li>
+          </ol>
+        </section>
+
+        <section id="brands">
+          <div class="eyebrow"><span class="num">04</span> Five brand worlds</div>
+          <h2 class="h2">One distributor, <em>five</em> personalities.</h2>
+          <div class="prose"><p>The old site dressed every brand in the same template. The new one gives each brand its own colour world, built from its packaging, while the ASNK navy, red and gold hold the whole thing together.</p></div>
+          <div class="as-brands reveal" style="margin-top:24px">
+            <a class="as-brand ah" href="https://perryop12.github.io/asnk-trading/brands/arm-and-hammer.html" style="text-decoration:none"><b>Arm &amp; Hammer</b><span>Oral &amp; personal care · Church &amp; Dwight, UK</span></a>
+            <a class="as-brand ox" href="https://perryop12.github.io/asnk-trading/brands/oxiclean.html" style="text-decoration:none"><b>OxiClean</b><span>Laundry &amp; stain removal</span></a>
+            <a class="as-brand fi" href="https://perryop12.github.io/asnk-trading/brands/fino.html" style="text-decoration:none"><b>Fino</b><span>Household · Sarantis, Greece</span></a>
+            <a class="as-brand pa" href="https://perryop12.github.io/asnk-trading/brands/paclan.html" style="text-decoration:none"><b>Paclan</b><span>Household · CeDo, Poland</span></a>
+            <a class="as-brand ky" href="https://perryop12.github.io/asnk-trading/brands/kyknos.html" style="text-decoration:none"><b>Kyknos</b><span>Tomatoes · Greek Canning Company</span></a>
+          </div>
+        </section>
+
+        <section id="content">
+          <div class="eyebrow"><span class="num">05</span> Content, kept whole</div>
+          <h2 class="h2">Every page has a <em>new home</em>.</h2>
+          <div class="prose"><p>We migrated the content page by page and kept the copy verbatim: product descriptions, the About story, both email addresses, the P.O. Box and the social links.</p></div>
+          <div class="table-wrap reveal" style="margin-top:24px">
+            <table class="data">
+              <thead><tr><th>Old site</th><th>New site</th></tr></thead>
+              <tbody>
+                <tr><td>Home slider + "Products" tabs + "Latest Products"</td><td>Home: product hero, brand worlds, interactive tabbed product rail, Kyknos and OxiClean spotlights</td></tr>
+                <tr><td>Products (brand tiles)</td><td>Catalogue with search, brand and category filters, sort and quick view</td></tr>
+                <tr><td>Arm And Hammer · Fino · Paclan · OxiClean pages</td><td>Brand pages with sub-category tabs — plus a new Kyknos page</td></tr>
+                <tr><td>34 product pages</td><td>34 product pages with the full original descriptions, related products and enquiry buttons</td></tr>
+                <tr><td>About</td><td>About, with the four manufacturer partnerships, the office photo and a map</td></tr>
+                <tr><td>Contact</td><td>Contact cards, validated "Keep in touch" form and map</td></tr>
+                <tr><td>Footer (office, links, socials)</td><td>Same footer content, reorganised</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="numbers">
+          <div class="eyebrow"><span class="num">06</span> Before &amp; after</div>
+          <h2 class="h2">Less to load. <em>More</em> to find.</h2>
+          <div style="margin-top:24px">
+            <div class="as-metric-head"><span>Arm &amp; Hammer page, first load</span><span>Before</span><span>After</span></div>
+            <div class="as-metric reveal"><span>Requests</span><span class="n old">92</span><span class="n new">9</span></div>
+            <div class="as-metric reveal"><span>Scripts loaded</span><span class="n old">43</span><span class="n new">2</span></div>
+            <div class="as-metric reveal"><span>Stylesheets</span><span class="n old">23</span><span class="n new">2</span></div>
+            <div class="as-metric reveal"><span>Images without alt text</span><span class="n old">12 of 15</span><span class="n new">0</span></div>
+            <div class="as-metric reveal"><span>Search</span><span class="n old">None</span><span class="n new">Instant</span></div>
+            <div class="as-metric reveal"><span>Cookie prompt before content</span><span class="n old">Yes</span><span class="n new">None needed</span></div>
+          </div>
+        </section>
+
+        <section id="learned">
+          <div class="eyebrow"><span class="num">07</span> What we learned</div>
+          <ol class="num-list">
+            <li class="reveal"><div><h4>A redesign is mostly a migration</h4><p>The riskiest part wasn't the visuals — it was making sure 34 descriptions, two inboxes and a P.O. Box survived. We crawled first and designed second.</p></div></li>
+            <li class="reveal"><div><h4>Match the tool to the job</h4><p>A shop plugin, a page builder and a slider plugin were running a catalogue with no checkout. A static site does that job faster, with nothing to patch.</p></div></li>
+            <li class="reveal"><div><h4>Design for how people actually enquire</h4><p>In this market, a call or an email is the sale. Putting that one tap away on every product mattered more than any animation.</p></div></li>
+          </ol>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <section class="section-tight" style="border-top:1px solid var(--line)">
+    <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+      <div>
+        <div class="eyebrow">Next</div>
+        <h2 class="h2" style="margin-top:12px">Is your site hiding <em>good</em> content?</h2>
+      </div>
+      <div class="row">
+        <a class="btn" href="../../#contact">Talk to Vexon Labs <span class="arr">→</span></a>
+        <a class="btn btn-ghost" href="https://perryop12.github.io/asnk-trading/">Explore the redesign ↗</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© <span data-year>2026</span> Vexon Labs · Accra, Ghana</span>
+    <span class="row" style="gap:20px"><a href="../../">Home</a><a href="../semestra/">Semestra</a></span>
+  </div>
+</footer>
+<script src="../../assets/js/site.js"></script>
+<script>
+  // Desktop / mobile toggle for the live preview.
+  (function () {
+    var frame = document.getElementById("as-frame");
+    document.querySelectorAll(".as-seg button").forEach(function (b) {
+      b.addEventListener("click", function () {
+        document.querySelectorAll(".as-seg button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+        frame.classList.toggle("mobile", b.dataset.size === "mobile");
+      });
+    });
+  })();
+</script>
+</body>
+</html>
