@@ -21,6 +21,7 @@ Each dossier in `private/<slug>.html` is encrypted with **AES-256-GCM**. The key
 - The two projects have **separate keys**, so Stratus collaborators can't open Guapp and Guapp collaborators can't open Stratus.
 - `/p/` is excluded in `robots.txt`, marked `noindex`, and not linked from the public site.
 - **Share link:** `https://<your-domain>/p/stratus/#k=<access-key>`. The part after `#` is never sent to the server. The page removes it from the address bar after unlocking and remembers the key on that device.
+- If an app strips the `#…` part of links, use `?k=<access-key>` instead, or paste the whole link or the key into the box on the unlock page.
 - **Revoking access** (for example when someone leaves a project): change the key in `.env.local`, rebuild, and push. Old links and remembered keys stop working. Then send the new link to the collaborators who remain.
 
 > ⚠️ `private/` is gitignored on purpose. The repo only holds encrypted output, so **back up `private/` and `.env.local`** somewhere safe (a password manager, or a private drive). If you lose them, you can't edit the dossiers.
