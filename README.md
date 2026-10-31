@@ -16,7 +16,7 @@ private/                   PLAINTEXT dossier sources + source docs  (gitignored,
 
 ## How the private pages work
 
-Each dossier in `private/<slug>.html` is encrypted with **AES-256-GCM**. The key is derived from that project's access key with **PBKDF2-SHA256** (600,000 iterations). Only the ciphertext is committed and published. Collaborators unlock it in their browser, so it works on any static host and needs no server.
+Each dossier in `private/<slug>.html` is encrypted with **AES-256-GCM**. The key is derived from that project's access key with **PBKDF2-SHA256** (100,000 iterations; the keys are long and random, so they carry the security). Only the ciphertext is committed and published. Collaborators unlock it in their browser, so it works on any static host and needs no server.
 
 - The two projects have **separate keys**, so Stratus collaborators can't open Guapp and Guapp collaborators can't open Stratus.
 - `/p/` is excluded in `robots.txt`, marked `noindex`, and not linked from the public site.

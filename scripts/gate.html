@@ -21,16 +21,17 @@
   .gate p { color: var(--ink-2); }
   .gate form { margin-top: 28px; display: grid; gap: 14px; }
   .gate label.f { font: 500 12px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-  .gate input[type="password"] {
+  .gate #pw {
     width: 100%; font: 16px/1.2 var(--f-mono); padding: 15px 16px; border-radius: 12px;
     border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
   }
-  .gate input[type="password"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+  .gate #pw:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
   .gate .remember { display: flex; gap: 10px; align-items: center; font-size: 14.5px; color: var(--ink-2); }
   .gate .remember input { width: 16px; height: 16px; accent-color: var(--accent); }
   .gate .btn { justify-content: center; width: 100%; padding: 15px 20px; }
   .gate .btn[disabled] { opacity: .6; cursor: progress; transform: none; }
   .gate .err { color: var(--bad); font-size: 14.5px; min-height: 1.4em; margin: 0; }
+  .gate .status { color: var(--muted); font-size: 14px; margin: -6px 0 0; min-height: 1.2em; }
   .gate .fine { font-size: 13.5px; color: var(--muted); margin-top: 28px; border-top: 1px solid var(--line); padding-top: 18px; }
 </style>
 </head>
@@ -49,12 +50,13 @@
     <div class="gate-lock"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="9" width="12" height="8" rx="2"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9"/></svg></div>
     <div class="eyebrow"><span class="num">Private</span> · Collaborators only</div>
     <h1 class="h1">__TITLE__</h1>
-    <p>This project dossier is shared only with current collaborators. Enter the access key you were given.</p>
+    <p>This project dossier is shared only with current collaborators. Enter the access key you were given — or paste the whole share link.</p>
     <form id="gate-form" autocomplete="off">
       <label class="f" for="pw">Access key</label>
-      <input id="pw" type="password" autocomplete="current-password" required autofocus spellcheck="false">
+      <input id="pw" type="text" autocomplete="off" autocapitalize="off" required autofocus spellcheck="false">
       <label class="remember"><input type="checkbox" id="remember"> Remember on this device</label>
       <p class="err" id="err" role="alert"></p>
+      <p class="status" id="status" aria-live="polite"></p>
       <button class="btn" type="submit" id="go">Unlock <span class="arr">→</span></button>
     </form>
     <p class="fine">The page is encrypted end to end. It is decrypted in your browser only — the key never leaves this device.</p>
@@ -93,16 +95,18 @@
   var err = document.getElementById("err");
   var btn = document.getElementById("go");
   var remember = document.getElementById("remember");
+  var status = document.getElementById("status");
 
   function tryPassword(password, keep) {
-    btn.disabled = true; err.textContent = ""; btn.firstChild.nodeValue = "Unlocking ";
+    btn.disabled = true; err.textContent = ""; btn.firstChild.nodeValue = "Unlocking… ";
+    status.textContent = "Unlocking — this can take a few seconds on some phones.";
     return deriveKey(password).then(function (key) {
       return decryptWith(key).then(function (html) {
         if (keep) crypto.subtle.exportKey("raw", key).then(function (raw) { store(STORE, b64(raw)); });
         render(html);
       });
     }).catch(function () {
-      btn.disabled = false; btn.firstChild.nodeValue = "Unlock ";
+      btn.disabled = false; btn.firstChild.nodeValue = "Unlock "; status.textContent = "";
       err.textContent = "That key didn't work. Check it and try again.";
       input.select();
     });
@@ -118,11 +122,16 @@
   }
 
   // 2) A share link carrying the key in the #fragment (never sent to the server).
+  // Pull a key out of "#k=…", "?k=…", or a whole pasted share link.
+  function extractKey(text) {
+    var m = String(text || "").match(/[#?&]k=([^&#\s]+)/);
+    return m ? decodeURIComponent(m[1]) : String(text || "").trim();
+  }
   function fromHash() {
-    var m = location.hash.match(/[#&]k=([^&]+)/);
+    var m = location.hash.match(/[#&]k=([^&]+)/) || location.search.match(/[?&]k=([^&]+)/);
     if (!m) return;
-    var pw = decodeURIComponent(m[1]);
-    history.replaceState(null, "", location.pathname + location.search);
+    var pw = decodeURIComponent(m[1]).trim();
+    history.replaceState(null, "", location.pathname);
     input.value = pw;
     tryPassword(pw, true);
   }
@@ -131,7 +140,8 @@
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    if (input.value) tryPassword(input.value, remember.checked);
+    var pw = extractKey(input.value);
+    if (pw) { input.value = pw; tryPassword(pw, remember.checked); }
   });
 })();
 </script>

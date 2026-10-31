@@ -17,7 +17,9 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const ITERATIONS = 600000;
+// Keys are 20 random characters (~100 bits), so security comes from the key itself, not from
+// slow hashing. A modest iteration count keeps unlocking quick on low-end phones.
+const ITERATIONS = 100000;
 
 // One entry per private project. `envVar` holds its password.
 const PROJECTS = [
@@ -85,7 +87,7 @@ for (const p of PROJECTS) {
   const password = process.env[p.envVar] || fileEnv[p.envVar];
   if (!existsSync(src)) { console.warn(`skip ${p.slug}: ${src} not found`); continue; }
   if (!password) { console.error(`missing ${p.envVar} — set it or run with --new-passwords`); process.exitCode = 1; continue; }
-  if (password.length < 12) { console.error(`${p.envVar} is too short (min 12 chars)`); process.exitCode = 1; continue; }
+  if (password.length < 20) { console.error(`${p.envVar} is too short (min 20 chars) — use --new-passwords`); process.exitCode = 1; continue; }
 
   const payload = await encrypt(readFileSync(src, "utf8"), password, p.slug);
   const html = gate
