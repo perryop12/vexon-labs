@@ -12,7 +12,7 @@
 // ever contains the encrypted output.
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
-import { webcrypto, randomBytes } from "node:crypto";
+import { webcrypto, randomBytes, createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -60,8 +60,10 @@ if (process.argv.includes("--new-passwords")) {
 const fileEnv = loadEnvFile();
 const b64 = (buf) => Buffer.from(buf).toString("base64");
 
-async function encrypt(plaintext, password) {
-  const salt = randomBytes(16);
+async function encrypt(plaintext, password, slug) {
+  // Salt is fixed per project (the IV stays random) so the derived key is stable across
+  // rebuilds — a key remembered on a collaborator's device keeps working after updates.
+  const salt = createHash("sha256").update(`vexon-labs:${slug}`).digest().subarray(0, 16);
   const iv = randomBytes(12);
   const baseKey = await webcrypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
   const key = await webcrypto.subtle.deriveKey(
@@ -85,7 +87,7 @@ for (const p of PROJECTS) {
   if (!password) { console.error(`missing ${p.envVar} — set it or run with --new-passwords`); process.exitCode = 1; continue; }
   if (password.length < 12) { console.error(`${p.envVar} is too short (min 12 chars)`); process.exitCode = 1; continue; }
 
-  const payload = await encrypt(readFileSync(src, "utf8"), password);
+  const payload = await encrypt(readFileSync(src, "utf8"), password, p.slug);
   const html = gate
     .replaceAll("__TITLE__", p.title)
     .replaceAll("__SLUG__", p.slug)
