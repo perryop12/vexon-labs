@@ -23,6 +23,7 @@ const ITERATIONS = 600000;
 const PROJECTS = [
   { slug: "stratus", title: "Stratus", envVar: "STRATUS_PASSWORD" },
   { slug: "guapp", title: "Guapp", envVar: "GUAPP_PASSWORD" },
+  { slug: "onefold", title: "Onefold", envVar: "ONEFOLD_PASSWORD" },
 ];
 
 const ENV_FILE = join(ROOT, ".env.local");
