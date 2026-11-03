@@ -3,7 +3,7 @@
 // dossier's styles, icon sprite and existing screens spliced in, and is written to
 // private/<slug>-flow.html (gitignored). build-private.mjs then encrypts it.
 //
-//   node scripts/build-flow.mjs paceline
+//   node scripts/build-flow.mjs paceline   (or mirra)
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -18,10 +18,15 @@ const sprite = dossier.match(/<svg width="0" height="0"[\s\S]*?\n<\/svg>/)[0];
 const screens = [...dossier.matchAll(/<div class="device"><div class="screen">[\s\S]*?<\/div><\/div>(?=\s*<figcaption)/g)].map((m) => m[0]);
 const browser = dossier.match(/<div class="browser[^"]*">[\s\S]*?(?=\n\s*<p class="[a-z]+-small" style="margin-top:12px">)/)[0].replace(/ reveal/, "");
 
-// Dossier screen order: welcome, drive, over, overlay, map, report, summary, notice check.
-const names = ["WELCOME", "DRIVE", "OVER", "OVERLAY", "MAP", "REPORT", "SUMMARY", "NOTICE"];
+// Placeholder name for each dossier screen, in the order the dossier shows them.
+const SCREENS = {
+  paceline: ["WELCOME", "DRIVE", "OVER", "OVERLAY", "MAP", "REPORT", "SUMMARY", "NOTICE"],
+  mirra: ["WELCOME", "TWIN", "PRODUCT", "FIT", "HOME", "AUCTION", "RUNWAY", "CAPTURE"],
+};
+const names = SCREENS[slug];
+if (!names) throw new Error(`no screen list for ${slug}`);
 if (screens.length < names.length) throw new Error(`expected ${names.length} screens, found ${screens.length}`);
-tpl = tpl.replace("{{STYLE}}", style).replace("{{SPRITE}}", sprite).replace("{{FLEET}}", browser);
+tpl = tpl.replace("{{STYLE}}", style).replace("{{SPRITE}}", sprite).replace("{{FLEET}}", browser).replace("{{WEB}}", browser);
 names.forEach((n, i) => { tpl = tpl.replace(`{{S_${n}}}`, screens[i]); });
 const left = tpl.match(/\{\{[A-Z_]+\}\}/g);
 if (left) throw new Error(`unfilled placeholders: ${left.join(", ")}`);

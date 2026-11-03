@@ -30,6 +30,7 @@ const PROJECTS = [
   { slug: "mirra", title: "Mirra", envVar: "MIRRA_PASSWORD" },
   // Extra pages share their project's key (and slug, so a key remembered on a device unlocks both).
   { slug: "paceline", title: "Paceline · Screen flow", envVar: "PACELINE_PASSWORD", src: "paceline-flow", out: "paceline/flow" },
+  { slug: "mirra", title: "Mirra · Screen flow", envVar: "MIRRA_PASSWORD", src: "mirra-flow", out: "mirra/flow" },
 ];
 
 const ENV_FILE = join(ROOT, ".env.local");
