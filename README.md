@@ -9,6 +9,7 @@ p/stratus/index.html       Stratus dossier (ENCRYPTED, collaborators only)
 p/guapp/index.html         Guapp dossier   (ENCRYPTED, collaborators only)
 p/onefold/index.html       Onefold dossier (ENCRYPTED, collaborators only)
 p/paceline/index.html      Paceline dossier (ENCRYPTED, collaborators only)
+p/mirra/index.html         Mirra dossier   (ENCRYPTED, collaborators only)
 assets/                    Shared CSS, JS, images
 scripts/build-private.mjs  Encrypts private/*.html -> p/*/index.html
 scripts/gate.html          The unlock page wrapped around each encrypted dossier
