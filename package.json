@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:flow": "node scripts/build-flow.mjs",
     "build:private": "node scripts/build-private.mjs",
     "passwords": "node scripts/build-private.mjs --new-passwords",
     "serve": "npx --yes serve -l 4321 ."

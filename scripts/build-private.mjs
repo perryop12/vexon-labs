@@ -21,13 +21,15 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 // slow hashing. A modest iteration count keeps unlocking quick on low-end phones.
 const ITERATIONS = 100000;
 
-// One entry per private project. `envVar` holds its password.
+// One entry per private page. `envVar` holds its password; `src` and `out` default to the slug.
 const PROJECTS = [
   { slug: "stratus", title: "Stratus", envVar: "STRATUS_PASSWORD" },
   { slug: "guapp", title: "Guapp", envVar: "GUAPP_PASSWORD" },
   { slug: "onefold", title: "Onefold", envVar: "ONEFOLD_PASSWORD" },
   { slug: "paceline", title: "Paceline", envVar: "PACELINE_PASSWORD" },
   { slug: "mirra", title: "Mirra", envVar: "MIRRA_PASSWORD" },
+  // Extra pages share their project's key (and slug, so a key remembered on a device unlocks both).
+  { slug: "paceline", title: "Paceline · Screen flow", envVar: "PACELINE_PASSWORD", src: "paceline-flow", out: "paceline/flow" },
 ];
 
 const ENV_FILE = join(ROOT, ".env.local");
@@ -85,22 +87,26 @@ const gate = readFileSync(join(ROOT, "scripts", "gate.html"), "utf8");
 let built = 0;
 
 for (const p of PROJECTS) {
-  const src = join(ROOT, "private", `${p.slug}.html`);
+  const src = join(ROOT, "private", `${p.src || p.slug}.html`);
+  const out = p.out || p.slug;
   const password = process.env[p.envVar] || fileEnv[p.envVar];
   if (!existsSync(src)) { console.warn(`skip ${p.slug}: ${src} not found`); continue; }
   if (!password) { console.error(`missing ${p.envVar} — set it or run with --new-passwords`); process.exitCode = 1; continue; }
   if (password.length < 20) { console.error(`${p.envVar} is too short (min 20 chars) — use --new-passwords`); process.exitCode = 1; continue; }
 
   const payload = await encrypt(readFileSync(src, "utf8"), password, p.slug);
+  // gate.html links assets as ../../ (right for p/<slug>/); deeper pages need more levels.
+  const up = "../".repeat(out.split("/").length + 1);
   const html = gate
+    .replaceAll("../../", up)
     .replaceAll("__TITLE__", p.title)
     .replaceAll("__SLUG__", p.slug)
     .replace("__PAYLOAD__", JSON.stringify(payload));
-  const outDir = join(ROOT, "p", p.slug);
+  const outDir = join(ROOT, "p", out);
   mkdirSync(outDir, { recursive: true });
   writeFileSync(join(outDir, "index.html"), html);
   built++;
-  console.log(`encrypted  private/${p.slug}.html  ->  p/${p.slug}/index.html`);
+  console.log(`encrypted  private/${p.src || p.slug}.html  ->  p/${out}/index.html`);
 }
 
 console.log(`${built} private page(s) built.`);
