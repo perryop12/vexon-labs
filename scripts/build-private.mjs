@@ -26,6 +26,7 @@ const PROJECTS = [
   { slug: "stratus", title: "Stratus", envVar: "STRATUS_PASSWORD" },
   { slug: "guapp", title: "Guapp", envVar: "GUAPP_PASSWORD" },
   { slug: "onefold", title: "Onefold", envVar: "ONEFOLD_PASSWORD" },
+  { slug: "paceline", title: "Paceline", envVar: "PACELINE_PASSWORD" },
 ];
 
 const ENV_FILE = join(ROOT, ".env.local");
