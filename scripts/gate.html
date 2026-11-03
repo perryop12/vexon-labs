@@ -54,7 +54,7 @@
     <form id="gate-form" autocomplete="off">
       <label class="f" for="pw">Access key</label>
       <input id="pw" type="text" autocomplete="off" autocapitalize="off" required autofocus spellcheck="false">
-      <label class="remember"><input type="checkbox" id="remember"> Remember on this device</label>
+      <label class="remember"><input type="checkbox" id="remember" checked> Remember on this device</label>
       <p class="err" id="err" role="alert"></p>
       <p class="status" id="status" aria-live="polite"></p>
       <button class="btn" type="submit" id="go">Unlock <span class="arr">→</span></button>
@@ -85,6 +85,12 @@
     return crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(PAYLOAD.iv) }, key, unb64(PAYLOAD.ct)).then(function (pt) { return dec.decode(pt); });
   }
   function render(html) {
+    // A remembered key can decrypt before this page has finished parsing. document.open() is
+    // ignored then and the project gets appended under the key form, so wait for the parse.
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", function () { render(html); });
+      return;
+    }
     document.open();
     document.write(html);
     document.close();
@@ -122,21 +128,31 @@
   }
 
   // 2) A share link carrying the key in the #fragment (never sent to the server).
+  // Keys are 20 letters/digits in groups of 5. Copying a link out of a chat or email often drags
+  // extra characters along (bold "**", a closing bracket, a full stop, %-encoding, capitals, spaces),
+  // so reduce whatever arrives to its letters and digits and regroup it.
+  function clean(k) {
+    try { k = decodeURIComponent(k); } catch (e) {}
+    var a = String(k || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    return a.length === 20 ? a.match(/.{5}/g).join("-") : String(k || "").trim();
+  }
   // Pull a key out of "#k=…", "?k=…", or a whole pasted share link.
   function extractKey(text) {
     var m = String(text || "").match(/[#?&]k=([^&#\s]+)/);
-    return m ? decodeURIComponent(m[1]) : String(text || "").trim();
+    return clean(m ? m[1] : text);
   }
   function fromHash() {
     var m = location.hash.match(/[#&]k=([^&]+)/) || location.search.match(/[?&]k=([^&]+)/);
     if (!m) return;
-    var pw = decodeURIComponent(m[1]).trim();
+    var pw = clean(m[1]);
     history.replaceState(null, "", location.pathname);
     input.value = pw;
     tryPassword(pw, true);
   }
   ready.catch(fromHash);
   window.addEventListener("hashchange", fromHash);
+  // Coming back via the back button can restore this locked page from cache; re-run the checks.
+  window.addEventListener("pageshow", function (e) { if (e.persisted) location.reload(); });
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
