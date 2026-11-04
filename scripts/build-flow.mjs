@@ -3,7 +3,7 @@
 // dossier's styles, icon sprite and existing screens spliced in, and is written to
 // private/<slug>-flow.html (gitignored). build-private.mjs then encrypts it.
 //
-//   node scripts/build-flow.mjs paceline   (or mirra, stratus, onefold)
+//   node scripts/build-flow.mjs paceline   (or mirra, stratus, onefold, guapp)
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -35,6 +35,7 @@ const SCREENS = {
   mirra: ["WELCOME", "TWIN", "PRODUCT", "FIT", "HOME", "AUCTION", "RUNWAY", "CAPTURE"],
   stratus: ["ONBOARD", "HOME", "DRILL", "MOMENT", "CHAT", "CHECK", "PATH", "FAMILY"],
   onefold: ["WELCOME", "TODAY", "DEVOTION", "PREP", "ROTA", "GIVE", "CARE", "LEDGER"],
+  guapp: ["WELCOME", "VERIFYUS", "CARD", "LIVENESS", "HOME", "DISCOVER", "STOCK", "REVIEW", "DEPOSIT", "RECURRING", "WITHDRAW", "ACTIVITY", "WAITLIST", "TOGETHER", "COMPOUND", "GOLD", "SEND"],
 };
 const names = SCREENS[slug];
 if (!names) throw new Error(`no screen list for ${slug}`);

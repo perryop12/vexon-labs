@@ -33,6 +33,7 @@ const PROJECTS = [
   { slug: "mirra", title: "Mirra · Screen flow", envVar: "MIRRA_PASSWORD", src: "mirra-flow", out: "mirra/flow" },
   { slug: "stratus", title: "Stratus · Screen flow", envVar: "STRATUS_PASSWORD", src: "stratus-flow", out: "stratus/flow" },
   { slug: "onefold", title: "Onefold · Screen flow", envVar: "ONEFOLD_PASSWORD", src: "onefold-flow", out: "onefold/flow" },
+  { slug: "guapp", title: "Guapp · Screen flow", envVar: "GUAPP_PASSWORD", src: "guapp-flow", out: "guapp/flow" },
 ];
 
 const ENV_FILE = join(ROOT, ".env.local");
